@@ -133,18 +133,31 @@ Settings       pay_frequency, payday_anchor, rwt_rate, currency
 
 ## 7. Roadmap
 
-1. **M1: Foundations.** Expo scaffold, DB schema, CSV import (BNZ and ASB), transactions list, categories
-2. **M2: Cash flow and insights.** Dashboard, cash-flow chart, category breakdown, rules
-3. **M3: Goals, TDs and forecast.** TD entry, goal entry, forecast engine with tests, goal detail chart
+- ✅ **Done: UI and logic on demo data.** All chosen screens, forecast engine (with tests), TD interest after RWT, cash flow, budgets, categorisation rules
+1. **M1: Save data on the phone.** SQLite (expo-sqlite) in place of the in-memory store
+2. **M2: CSV import.** BNZ and ASB export formats, duplicate detection, transfer detection
+3. **M3: Manual accounts.** Add and edit savings, KiwiSaver and loan accounts; edit balances
 4. **M4: Akahu sync.** Automatic import and transfer detection
 5. **M5: Extras.** Whichever ideas from §3 you choose
 
 ---
 
-## 8. Decisions needed from you
+## 8. Decisions
 
-1. Which **wireframe option** (A or B) for each screen in `wireframes.html`
-2. **Akahu, CSV, or both**
-3. **Budget period:** calendar month, or pay cycle (weekly / fortnightly / monthly)
-4. Which **extra ideas** from §3 to include
-5. Your **RWT rate** (it can be changed later)
+### Made
+| Screen | Chosen option |
+|---|---|
+| Home dashboard | **1C**: net-worth overview |
+| Cash flow | **2A**: monthly in/out bars |
+| Spending | **3B**: budgets with progress bars |
+| Transactions | **4**: list plus a categorise screen |
+| Goal detail | **5A**: stacked forecast |
+| Term deposits | **6**: list and add/edit form |
+| Accounts | **7**: accounts and add-a-bank screen |
+| Navigation | **8B**: four tabs plus a centre quick-add button; settings behind the cog on Home |
+
+### Still open (current defaults in brackets)
+1. **Akahu, CSV, or both** [both: CSV first, then Akahu]
+2. **Budget period** [fortnightly, aligned to payday; changeable in Settings]
+3. Which **extra ideas** from §3 to include [none yet]
+4. Your **RWT rate** [30%; changeable in Settings]
