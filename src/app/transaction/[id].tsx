@@ -49,7 +49,7 @@ export default function Categorise() {
       {pair && pairAccount && categoryId === 'transfer' ? (
         <T.Mute>
           Matched with {formatSigned(pair.amount)} {pair.amount > 0 ? 'into' : 'out of'} {pairAccount.bank} {pairAccount.name} on{' '}
-          {shortDate(parseISO(pair.date))}. Both sides are left out of income and spending. Pick another category if this isn't a transfer.
+          {shortDate(parseISO(pair.date))}. Both sides are left out of income and spending. Pick another category if this isn’t a transfer.
         </T.Mute>
       ) : null}
       {categoryId === 'transfer' ? (

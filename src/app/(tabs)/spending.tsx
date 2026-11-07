@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
@@ -13,7 +13,15 @@ import { formatMoney, formatSigned } from '../../lib/money';
 type Tab = 'cashflow' | 'budgets' | 'transactions';
 
 export default function Spending() {
-  const [tab, setTab] = useState<Tab>('cashflow');
+  // Other screens can open a particular view, e.g. the uncategorised transactions after an import.
+  // `at` changes on every such navigation, so the same view can be opened again later.
+  const params = useLocalSearchParams<{ view?: Tab; filter?: Filter; at?: string }>();
+  const [tab, setTab] = useState<Tab>(params.view ?? 'cashflow');
+  const [seen, setSeen] = useState(params.at);
+  if (params.at !== seen) {
+    setSeen(params.at);
+    if (params.view) setTab(params.view);
+  }
   return (
     <Screen header={false}>
       <T.Title>Spending</T.Title>
@@ -26,7 +34,7 @@ export default function Spending() {
           { value: 'transactions', label: 'Transactions' },
         ]}
       />
-      {tab === 'cashflow' ? <CashFlow /> : tab === 'budgets' ? <Budgets /> : <Transactions />}
+      {tab === 'cashflow' ? <CashFlow /> : tab === 'budgets' ? <Budgets /> : <Transactions key={params.at} initialFilter={params.filter} />}
     </Screen>
   );
 }
@@ -99,7 +107,7 @@ function CashFlow() {
           rightStyle={[{ fontWeight: '700' }, sel.in - sel.out >= 0 ? s.pos : s.neg]}
           last
         />
-        <T.Mute>Transfers between your own accounts aren't counted.</T.Mute>
+        <T.Mute>Transfers between your own accounts aren’t counted.</T.Mute>
       </Card>
     </>
   );
@@ -207,10 +215,10 @@ function Budgets() {
 type Filter = 'all' | 'ASB' | 'BNZ' | 'uncategorised';
 const PAGE = 60;
 
-function Transactions() {
+function Transactions({ initialFilter }: { initialFilter?: Filter }) {
   const { state } = useStore();
   const [q, setQ] = useState('');
-  const [filter, setFilter] = useState<Filter>('all');
+  const [filter, setFilter] = useState<Filter>(initialFilter ?? 'all');
   const [limit, setLimit] = useState(PAGE);
   const bankOf = useMemo(() => new Map(state.accounts.map((a) => [a.id, a])), [state.accounts]);
   const catOf = useMemo(() => new Map(state.categories.map((c) => [c.id, c])), [state.categories]);

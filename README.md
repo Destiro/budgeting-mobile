@@ -35,7 +35,15 @@ npm run typecheck
 | Accounts | 6, 7 | Accounts by bank; term deposits with maturity countdown and after-tax interest |
 | ＋ (centre tab) | 8B | Quick add: transaction, term deposit or goal |
 
-The app currently runs on **demo data held in memory**. Saving data on the phone and bank sync come next (see the roadmap in `docs/DESIGN.md`).
+The app opens on **demo data**. Tap **Use my own data** on Home to clear it and add your own accounts; from then on everything is saved on the device (expo-sqlite key-value store on the phone, localStorage in a browser).
+
+### Importing transactions
+
+1. In ASB or BNZ internet banking, export the account's transactions as CSV.
+2. In the app: Accounts › Import a CSV, pick the account, choose the file.
+3. Check the preview (dates, amounts, how many are new) and import. Re-importing an overlapping date range skips what's already there.
+
+Rules categorise common NZ merchants automatically, and transfers between your own accounts (including credit card repayments) are paired and left out of spending once both sides are imported.
 
 ## Layout
 

@@ -25,6 +25,7 @@ export const categories: Category[] = [
   { id: 'shopping', name: 'Shopping', emoji: '🛍️', group: 'lifestyle' },
   { id: 'bills', name: 'Bills', emoji: '💡', group: 'bills' },
   { id: 'subscriptions', name: 'Subscriptions', emoji: '📺', group: 'bills' },
+  { id: 'insurance', name: 'Insurance', emoji: '🛡️', group: 'bills' },
   { id: 'transfer', name: 'Transfer', emoji: '🔁', group: 'transfer' },
 ];
 
@@ -54,19 +55,48 @@ export const budgets: Budget[] = [
   { categoryId: 'shopping', amount: 100 },
 ];
 
-export const rules: Rule[] = [
-  { id: 'r1', match: 'COUNTDOWN', categoryId: 'groceries' },
-  { id: 'r2', match: "PAK'NSAVE", categoryId: 'groceries' },
-  { id: 'r3', match: 'NEW WORLD', categoryId: 'groceries' },
-  { id: 'r4', match: 'Z ENERGY', categoryId: 'transport' },
-  { id: 'r5', match: 'AT HOP', categoryId: 'transport' },
-  { id: 'r6', match: 'NETFLIX', categoryId: 'subscriptions' },
-  { id: 'r7', match: 'SPOTIFY', categoryId: 'subscriptions' },
-  { id: 'r8', match: 'MERCURY', categoryId: 'bills' },
-  { id: 'r9', match: 'ONE NZ', categoryId: 'bills' },
-  { id: 'r10', match: 'SALARY', categoryId: 'income' },
-  { id: 'r11', match: 'RENT J SMITH', categoryId: 'rent' },
+/**
+ * Starting rules: common NZ merchants. Earlier rules win, so specific ones ("UBER EATS") come
+ * before general ones ("UBER"). Rules you create from the categorise screen go to the top.
+ */
+const RULES: [string, string][] = [
+  // Groceries
+  ['COUNTDOWN', 'groceries'], ['WOOLWORTHS', 'groceries'], ["PAK'NSAVE", 'groceries'], ['PAK N SAVE', 'groceries'],
+  ['PAKNSAVE', 'groceries'], ['NEW WORLD', 'groceries'], ['FOUR SQUARE', 'groceries'], ['FRESHCHOICE', 'groceries'],
+  ['SUPERVALUE', 'groceries'],
+  // Eating out (before transport, so Uber Eats isn't counted as a ride)
+  ['UBER *EATS', 'eating-out'], ['UBER EATS', 'eating-out'], ['DOORDASH', 'eating-out'], ['DELIVEREASY', 'eating-out'],
+  ['MCDONALDS', 'eating-out'], ['KFC', 'eating-out'], ['BURGER KING', 'eating-out'], ['BURGERFUEL', 'eating-out'],
+  ['SUBWAY', 'eating-out'], ['DOMINOS', 'eating-out'], ['HELL PIZZA', 'eating-out'], ['STARBUCKS', 'eating-out'],
+  ['CAFE', 'eating-out'], ['EATERY', 'eating-out'],
+  // Transport
+  ['Z ENERGY', 'transport'], ['BP CONNECT', 'transport'], ['MOBIL', 'transport'], ['CALTEX', 'transport'],
+  ['GULL ', 'transport'], ['WAITOMO', 'transport'], ['NPD ', 'transport'], ['AT HOP', 'transport'],
+  ['SNAPPER', 'transport'], ['UBER', 'transport'], ['WILSON PARKING', 'transport'], ['NZTA', 'transport'],
+  // Bills and utilities
+  ['MERCURY', 'bills'], ['CONTACT ENERGY', 'bills'], ['GENESIS', 'bills'], ['MERIDIAN', 'bills'],
+  ['ELECTRIC KIWI', 'bills'], ['FLICK', 'bills'], ['WATERCARE', 'bills'], ['SPARK', 'bills'], ['ONE NZ', 'bills'],
+  ['2DEGREES', 'bills'], ['SKINNY', 'bills'], ['SLINGSHOT', 'bills'], ['ORCON', 'bills'],
+  // Subscriptions
+  ['NETFLIX', 'subscriptions'], ['SPOTIFY', 'subscriptions'], ['DISNEY PLUS', 'subscriptions'],
+  ['NEON', 'subscriptions'], ['APPLE.COM/BILL', 'subscriptions'], ['GOOGLE *', 'subscriptions'],
+  ['YOUTUBE', 'subscriptions'], ['AMAZON PRIME', 'subscriptions'],
+  // Insurance
+  ['AA INSURANCE', 'insurance'], ['TOWER', 'insurance'], ['AMI INSURANCE', 'insurance'],
+  ['STATE INSURANCE', 'insurance'], ['SOUTHERN CROSS', 'insurance'], ['NIB NZ', 'insurance'],
+  // Health
+  ['CHEMIST WAREHOUSE', 'health'], ['UNICHEM', 'health'], ['LIFE PHARMACY', 'health'], ['PHARMACY', 'health'],
+  // Shopping
+  ['KMART', 'shopping'], ['THE WAREHOUSE', 'shopping'], ['FARMERS', 'shopping'], ['BRISCOES', 'shopping'],
+  ['MITRE 10', 'shopping'], ['BUNNINGS', 'shopping'], ['NOEL LEEMING', 'shopping'], ['JB HI-FI', 'shopping'],
+  ['REBEL SPORT', 'shopping'], ['TEMU', 'shopping'], ['AMAZON', 'shopping'],
+  // Fun
+  ['EVENT CINEMAS', 'fun'], ['HOYTS', 'fun'], ['TICKETMASTER', 'fun'], ['TICKETEK', 'fun'],
+  // Income and the demo's landlord
+  ['SALARY', 'income'], ['WAGES', 'income'], ['RENT J SMITH', 'rent'],
 ];
+
+export const rules: Rule[] = RULES.map(([match, categoryId], i) => ({ id: `default-${i}`, match, categoryId }));
 
 export function sampleGoals(today: Date): Goal[] {
   return [
@@ -195,7 +225,7 @@ export function sampleTransactions(today: Date): Transaction[] {
   }
 
   // A few recent ones left uncategorised so there's something to sort.
-  onCard(addDays(today, -1), 38.5, 'UBER *EATS 4821', null);
+  onCard(addDays(today, -1), 38.5, 'SQ *KAI HOUSE 4821', null);
   onCard(addDays(today, -2), 64.0, 'LOBSTER SEAFOOD CO', null);
   add(addDays(today, -3), 'bnz-everyday', -12.5, 'POS W/D 0921 PARKING', null);
 

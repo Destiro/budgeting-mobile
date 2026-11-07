@@ -103,7 +103,7 @@ export default function GoalDetail() {
       </Card>
 
       <Card>
-        <T.H>What's counted</T.H>
+        <T.H>What’s counted</T.H>
         {linkedAccounts.map((a) => (
           <Row
             key={a.id}

@@ -5,8 +5,11 @@
   "dependencies": {
     "expo": "~58.0.23",
     "expo-constants": "~58.0.15",
+    "expo-document-picker": "~58.0.4",
+    "expo-file-system": "~58.0.13",
     "expo-linking": "~58.0.16",
     "expo-router": "~58.0.30",
+    "expo-sqlite": "~58.0.15",
     "expo-status-bar": "~58.0.4",
     "react": "19.3.0",
     "react-dom": "19.3.0",
@@ -17,11 +20,13 @@
     "react-native-web": "~0.21.4"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.3.0",
-    "typescript": "~6.0.3",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~58.0.4",
     "jest": "^30.5.2",
     "jest-expo": "~58.0.14",
-    "@types/jest": "^30.0.0"
+    "typescript": "~6.0.3"
   },
   "scripts": {
     "start": "expo start",
@@ -30,7 +35,8 @@
     "web": "expo start --web",
     "test": "jest",
     "typecheck": "tsc --noEmit",
-    "preview:build": "./scripts/build-preview.sh"
+    "preview:build": "./scripts/build-preview.sh",
+    "lint": "expo lint"
   },
   "private": true,
   "jest": {

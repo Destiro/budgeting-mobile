@@ -3,7 +3,7 @@ import { Pressable, Text, View } from 'react-native';
 
 import { LineChart } from '../../components/charts';
 import { colors } from '../../components/theme';
-import { Badge, Card, ProgressBar, Row, Screen, T, s } from '../../components/ui';
+import { Badge, Button, Card, ProgressBar, Row, Screen, T, s } from '../../components/ui';
 import { goalSummary } from '../../data/selectors';
 import { useStore } from '../../data/store';
 import { netWorth, netWorthHistory } from '../../lib/analytics';
@@ -37,6 +37,16 @@ export default function Home() {
           <Text style={{ fontSize: 16 }}>⚙️</Text>
         </Pressable>
       </View>
+
+      {state.mode === 'demo' ? (
+        <Card>
+          <T.H>You’re looking at demo data</T.H>
+          <T.Mute>Everything here is made up. When you’re ready, clear it and add your own accounts.</T.Mute>
+          <Button title="Use my own data" onPress={() => router.push('/start')} />
+        </Card>
+      ) : (
+        <GettingStarted />
+      )}
 
       <View>
         <T.Mute>Net worth</T.Mute>
@@ -92,5 +102,52 @@ export default function Home() {
         })}
       </Card>
     </Screen>
+  );
+}
+
+/** Checklist shown after leaving the demo, until every step is done or it's dismissed. */
+function GettingStarted() {
+  const { state, dispatch } = useStore();
+  if (state.onboardingDismissed) return null;
+  const linked = state.goals.some(
+    (g) => g.accountIds.length > 0 && state.termDeposits.some((t) => t.goalId === g.id),
+  );
+  const steps = [
+    { done: state.accounts.length > 0, label: 'Add your accounts', sub: 'ASB pay and rent, BNZ everyday, savings and credit card', go: () => router.push('/account/edit') },
+    { done: state.transactions.length > 0, label: 'Import transactions', sub: 'A CSV from internet banking for each account', go: () => router.push('/import') },
+    { done: state.termDeposits.length > 0, label: 'Add your term deposit', sub: 'Rate, term and maturity', go: () => router.push('/td/edit') },
+    {
+      done: linked,
+      label: 'Set up your goal',
+      sub: 'Count your savings account and term deposit towards it',
+      go: () => (state.goals[0] ? router.push({ pathname: '/goal/edit', params: { id: state.goals[0].id } }) : router.push('/goal/edit')),
+    },
+  ];
+  const remaining = steps.filter((x) => !x.done).length;
+  if (remaining === 0) return null;
+  return (
+    <Card>
+      <View style={s.between}>
+        <T.H>Getting started</T.H>
+        <T.Mute>
+          {steps.length - remaining} of {steps.length} done
+        </T.Mute>
+      </View>
+      {steps.map((x, i) => (
+        <Row
+          key={x.label}
+          wrap
+          icon={x.done ? '✅' : String(i + 1)}
+          left={x.label}
+          sub={x.sub}
+          right={x.done ? undefined : '›'}
+          onPress={x.done ? undefined : x.go}
+          last={i === steps.length - 1}
+        />
+      ))}
+      <Pressable onPress={() => dispatch({ type: 'dismissOnboarding' })} hitSlop={8}>
+        <T.Mute style={{ textAlign: 'right' }}>Hide</T.Mute>
+      </Pressable>
+    </Card>
   );
 }

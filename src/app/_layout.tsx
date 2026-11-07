@@ -27,6 +27,9 @@ export default function RootLayout() {
           <Stack.Screen name="transaction/new" options={{ title: 'Add transaction', presentation: 'modal' }} />
           <Stack.Screen name="quick-add" options={{ title: 'Add', presentation: 'modal' }} />
           <Stack.Screen name="connect" options={{ title: 'Add accounts' }} />
+          <Stack.Screen name="import" options={{ title: 'Import CSV' }} />
+          <Stack.Screen name="account/edit" options={{ title: 'Account', presentation: 'modal' }} />
+          <Stack.Screen name="start" options={{ title: 'Use my own data' }} />
           <Stack.Screen name="settings" options={{ title: 'Settings' }} />
         </Stack>
       </StoreProvider>

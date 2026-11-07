@@ -140,9 +140,10 @@ Settings       pay_frequency, payday_anchor, rwt_rate, currency
 ## 7. Roadmap
 
 - ✅ **Done: UI and logic on demo data.** All chosen screens, forecast engine (with tests), TD interest after RWT, cash flow, budgets, categorisation rules, automatic transfer matching, and goal contributions taken from what you actually move into savings
-1. **M1: Save data on the phone.** SQLite (expo-sqlite) in place of the in-memory store
-2. **M2: CSV import.** BNZ and ASB export formats, duplicate detection, transfer detection
-3. **M3: Manual accounts.** Add and edit savings, KiwiSaver and loan accounts; edit balances
+- ✅ **Your own data.** Saved on the phone (expo-sqlite key-value store; localStorage in a browser), manual accounts, CSV import for BNZ and ASB with duplicate detection and transfer matching, getting-started checklist
+1. **M1: Check against real exports.** Adjust the CSV reader to your actual BNZ/ASB files (the layouts are modelled on their documented formats, not on a real file)
+2. **M2: Bills and subscriptions.** Detect recurring payments and show what's coming up before payday
+3. **M3: Term deposit reminders.** Notify before a TD matures
 4. **M4: Akahu sync.** Automatic import and transfer detection
 5. **M5: Extras.** Whichever ideas from §3 you choose
 

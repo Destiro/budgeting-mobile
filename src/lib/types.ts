@@ -32,6 +32,8 @@ export interface Transaction {
   categoryId: string | null;
   /** For a transfer between your own accounts: the id of the transaction on the other side */
   transferPairId?: string;
+  /** The bank's own id for the transaction, when the export has one (used to skip duplicates) */
+  externalId?: string;
 }
 
 export interface Rule {

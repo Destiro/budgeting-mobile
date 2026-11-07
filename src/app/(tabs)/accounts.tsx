@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import { Pressable, View } from 'react-native';
 
 import { colors } from '../../components/theme';
-import { Card, ProgressBar, Row, Screen, T, s } from '../../components/ui';
+import { Button, Card, ProgressBar, Row, Screen, T, s } from '../../components/ui';
 import { useStore } from '../../data/store';
 import { daysBetween, shortDate } from '../../lib/dates';
 import type { Bank } from '../../lib/types';
@@ -33,7 +33,7 @@ export default function Accounts() {
         if (!accts.length) return null;
         return (
           <View key={bank} style={{ gap: 4 }}>
-            <T.Mute>{bank === 'Other' ? 'Manual' : `${bank} · demo data (connect to sync)`}</T.Mute>
+            <T.Mute>{bank === 'Other' ? 'Other' : state.mode === 'demo' ? `${bank} · demo data` : bank}</T.Mute>
             <Card style={{ paddingVertical: 2 }}>
               {accts.map((a, i) => (
                 <Row
@@ -43,12 +43,23 @@ export default function Accounts() {
                   right={formatMoney(a.balance)}
                   rightStyle={a.balance < 0 ? s.neg : undefined}
                   last={i === accts.length - 1}
+                  onPress={() => router.push({ pathname: '/account/edit', params: { id: a.id } })}
                 />
               ))}
             </Card>
           </View>
         );
       })}
+
+      {state.accounts.length === 0 ? (
+        <Card>
+          <T.H>No accounts yet</T.H>
+          <T.Mute>Add each account your money moves through, then import its transactions from a CSV.</T.Mute>
+          <Button title="Add an account" onPress={() => router.push('/account/edit')} />
+        </Card>
+      ) : (
+        <Button ghost title="Import a CSV" onPress={() => router.push('/import')} />
+      )}
 
       <View style={[s.between, { marginTop: 8 }]}>
         <T.H>Term deposits</T.H>

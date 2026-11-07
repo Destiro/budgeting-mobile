@@ -70,6 +70,7 @@ export function Row({
   onPress,
   last,
   rightStyle,
+  wrap,
 }: {
   left: ReactNode;
   right?: ReactNode;
@@ -78,6 +79,8 @@ export function Row({
   onPress?: () => void;
   last?: boolean;
   rightStyle?: StyleProp<TextStyle>;
+  /** Let long text wrap instead of truncating to one line */
+  wrap?: boolean;
 }) {
   const body = (
     <View style={[s.row, !last && s.rowLine]}>
@@ -87,10 +90,10 @@ export function Row({
         </View>
       ) : null}
       <View style={{ flex: 1 }}>
-        <Text style={s.body} numberOfLines={1}>
+        <Text style={s.body} numberOfLines={wrap ? undefined : 1}>
           {left}
         </Text>
-        {sub ? <Text style={s.mute} numberOfLines={1}>{sub}</Text> : null}
+        {sub ? <Text style={s.mute} numberOfLines={wrap ? undefined : 1}>{sub}</Text> : null}
       </View>
       {right !== undefined ? <Text style={[s.body, { fontVariant: ['tabular-nums'] }, rightStyle]}>{right}</Text> : null}
     </View>
