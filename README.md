@@ -12,6 +12,10 @@ npx expo start        # then scan the QR code with the Expo Go app on your phone
 npm run web           # or open it in a browser
 ```
 
+### Preview in a phone browser
+
+`npm run preview:build` writes a single self-contained `dist-preview/kowhai-budget.html` that runs the whole app (web version) from any static host.
+
 ```bash
 npm test              # forecast + analytics unit tests
 npm run typecheck
