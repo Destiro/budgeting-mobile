@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Budget App Wireframes</title>
+<style>
+:root{--bg:#f4f4f2;--paper:#fff;--ink:#1d1d1f;--mute:#77777a;--line:#d6d6d3;--fill:#ececea;--accent:#2f6f5e;--warn:#b5562b;}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141415;--paper:#1e1e20;--ink:#ececec;--mute:#9a9a9e;--line:#3a3a3d;--fill:#2a2a2d;--accent:#6fbfa5;--warn:#e08a5f;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 -apple-system,system-ui,Segoe UI,Roboto,sans-serif;padding:24px 16px 64px}
+h1{font-size:24px;margin:0 0 4px}
+h2{font-size:18px;margin:40px 0 4px;padding-top:16px;border-top:1px solid var(--line)}
+.lead{color:var(--mute);max-width:720px;margin:0 0 8px}
+.row{display:flex;flex-wrap:wrap;gap:24px;margin-top:16px}
+.opt{display:flex;flex-direction:column;gap:8px}
+.tag{font-weight:600;font-size:13px}
+.tag span{color:var(--mute);font-weight:400}
+.phone{width:300px;max-width:100%;height:600px;background:var(--paper);border:2px solid var(--ink);border-radius:32px;padding:18px 14px 0;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.phone .scr{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:10px}
+.top{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:16px}
+.mute{color:var(--mute);font-size:12px}
+.big{font-size:28px;font-weight:700}
+.card{border:1.5px solid var(--line);border-radius:12px;padding:10px}
+.ph{background:var(--fill);border-radius:6px}
+.bar{height:8px;background:var(--fill);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.li{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.li:last-child{border-bottom:0}
+.ic{width:24px;height:24px;border-radius:50%;background:var(--fill);display:inline-block;vertical-align:middle;margin-right:8px;flex:none}
+.neg{color:var(--warn)}.pos{color:var(--accent)}
+.tabs{display:flex;justify-content:space-around;border-top:1.5px solid var(--line);padding:8px 0 14px;font-size:10px;color:var(--mute);margin:0 -14px;background:var(--paper)}
+.tabs div{text-align:center}.tabs div:before{content:"";display:block;width:18px;height:18px;border-radius:5px;background:var(--fill);margin:0 auto 2px}
+.tabs .on{color:var(--ink);font-weight:600}.tabs .on:before{background:var(--ink)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{border:1.5px solid var(--line);border-radius:99px;padding:3px 10px;font-size:12px}.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn{background:var(--ink);color:var(--paper);text-align:center;border-radius:10px;padding:10px;font-weight:600}
+.btn.ghost{background:none;color:var(--ink);border:1.5px solid var(--ink)}
+.field{border:1.5px solid var(--line);border-radius:8px;padding:8px;font-size:12px}
+.field b{display:block;color:var(--mute);font-weight:400;font-size:11px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.note{font-size:12px;color:var(--mute);max-width:300px}
+svg{display:block;width:100%}
+.ax{stroke:var(--line)}.ln{stroke:var(--ink);fill:none;stroke-width:2}.ln2{stroke:var(--accent);fill:none;stroke-width:2;stroke-dasharray:4 3}
+.fa{fill:var(--fill)}.fk{fill:var(--accent)}.fi{fill:var(--ink)}.fw{fill:var(--warn)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--paper);border-top:2px solid var(--ink);border-radius:20px 20px 0 0;padding:14px;display:flex;flex-direction:column;gap:8px}
+.dim{position:absolute;inset:0;background:rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<h1>Budget app: wireframes</h1>
+<p class="lead">These are low-fidelity screens for discussion. Each screen has <b>Option A</b> and <b>Option B</b> (and sometimes C). Pick one per screen, mix them, or tell me what to change. The numbers are made-up sample data.</p>
+
+<!-- ============ 1 DASHBOARD ============ -->
+<h2>1. Home dashboard</h2>
+<p class="lead">This is the first screen you see after opening the app.</p>
+<div class="row">
+ <div class="opt"><div class="tag">Option A <span>· Cash-flow first</span></div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>Kia ora 👋</span><span class="ic"></span></div>
+   <div class="card"><div class="mute">Safe to spend until payday (Fri)</div><div class="big">$412</div><div class="mute">after bills $380 + goal $450</div></div>
+   <div class="card"><div class="li" style="border:0"><b>November</b><span class="mute">pay cycle ▾</span></div>
+    <div class="grid2"><div><div class="mute">In</div><b class="pos">+$4,820</b></div><div><div class="mute">Out</div><b class="neg">−$3,190</b></div></div>
+    <svg viewBox="0 0 260 60"><rect class="fk" x="10" y="10" width="200" height="14" rx="3"/><rect class="fw" x="10" y="32" width="132" height="14" rx="3"/></svg>
+    <div class="mute">Net +$1,630 · 18 days left</div></div>
+   <div class="card"><b>Top spending</b>
+    <div class="li"><span><span class="ic"></span>Groceries</span><span>$612</span></div>
+    <div class="li"><span><span class="ic"></span>Eating out</span><span>$344</span></div>
+    <div class="li"><span><span class="ic"></span>Transport</span><span>$210</span></div></div>
+   <div class="card"><div class="li" style="border:0"><b>House deposit</b><span class="pos">On track</span></div><div class="bar"><i style="width:42%"></i></div><div class="mute">$12,600 of $30,000 · est. Sep 2027</div></div>
+  </div><div class="tabs"><div class="on">Home</div><div>Spending</div><div>Goals</div><div>Accounts</div><div>More</div></div></div>
+ </div>
+ <div class="opt"><div class="tag">Option B <span>· Goal first</span></div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>Home</span><span class="ic"></span></div>
+   <div class="card" style="text-align:center"><div class="mute">House deposit</div>
+    <svg viewBox="0 0 120 120" style="width:150px;margin:6px auto"><circle cx="60" cy="60" r="48" fill="none" class="ax" stroke-width="12"/><circle cx="60" cy="60" r="48" fill="none" stroke="var(--accent)" stroke-width="12" stroke-dasharray="127 302" transform="rotate(-90 60 60)"/><text x="60" y="58" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor">42%</text><text x="60" y="76" text-anchor="middle" font-size="10" fill="currentColor">$12.6k / 30k</text></svg>
+    <div><b class="pos">On track: Sep 2027</b></div><div class="mute">incl. $10k TD @ 4.6% (matures Mar)</div></div>
+   <div class="grid2"><div class="card"><div class="mute">This month in</div><b>$4,820</b></div><div class="card"><div class="mute">This month out</div><b>$3,190</b></div></div>
+   <div class="card"><b>Recent</b>
+    <div class="li"><span><span class="ic"></span>Countdown</span><span class="neg">−$86.40</span></div>
+    <div class="li"><span><span class="ic"></span>Z Energy</span><span class="neg">−$72.10</span></div>
+    <div class="li"><span><span class="ic"></span>Salary</span><span class="pos">+$2,410</span></div></div>
+  </div><div class="tabs"><div class="on">Home</div><div>Spending</div><div>Goals</div><div>Accounts</div><div>More</div></div></div>
+ </div>
+ <div class="opt"><div class="tag">Option C <span>· Net-worth overview</span></div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>Overview</span><span class="ic"></span></div>
+   <div class="mute">Net worth</div><div class="big">$46,280 <span class="mute pos">▲ $1.2k</span></div>
+   <svg viewBox="0 0 260 70"><polyline class="ln" points="0,60 40,55 80,50 120,48 160,38 200,32 260,20"/></svg>
+   <div class="card"><b>Accounts</b>
+    <div class="li"><span><span class="ic"></span>ASB Everyday</span><span>$2,104</span></div>
+    <div class="li"><span><span class="ic"></span>BNZ Rapid Save</span><span>$8,000</span></div>
+    <div class="li"><span><span class="ic"></span>BNZ Term Deposit</span><span>$10,000</span></div>
+    <div class="li"><span><span class="ic"></span>ASB Visa</span><span class="neg">−$624</span></div></div>
+   <div class="card"><div class="li" style="border:0"><b>Goals</b><span class="mute">2 active</span></div><div class="bar"><i style="width:42%"></i></div></div>
+  </div><div class="tabs"><div class="on">Home</div><div>Spending</div><div>Goals</div><div>Accounts</div><div>More</div></div></div>
+ </div>
+</div>
+
+<!-- ============ 2 CASH FLOW ============ -->
+<h2>2. Cash flow</h2>
+<div class="row">
+ <div class="opt"><div class="tag">Option A <span>· Monthly in/out bars</span></div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>Cash flow</span><span class="mute">6M ▾</span></div>
+   <div class="chips"><span class="chip">1M</span><span class="chip on">6M</span><span class="chip">12M</span><span class="chip">Pay cycle</span></div>
+   <svg viewBox="0 0 260 150"><line class="ax" x1="0" y1="130" x2="260" y2="130"/>
+    <g><rect class="fk" x="10" y="40" width="14" height="90"/><rect class="fw" x="26" y="60" width="14" height="70"/>
+    <rect class="fk" x="52" y="45" width="14" height="85"/><rect class="fw" x="68" y="35" width="14" height="95"/>
+    <rect class="fk" x="94" y="40" width="14" height="90"/><rect class="fw" x="110" y="62" width="14" height="68"/>
+    <rect class="fk" x="136" y="40" width="14" height="90"/><rect class="fw" x="152" y="55" width="14" height="75"/>
+    <rect class="fk" x="178" y="30" width="14" height="100"/><rect class="fw" x="194" y="58" width="14" height="72"/>
+    <rect class="fk" x="220" y="40" width="14" height="90"/><rect class="fw" x="236" y="70" width="14" height="60"/></g>
+    <g font-size="9" fill="currentColor"><text x="18" y="143">Jun</text><text x="60" y="143">Jul</text><text x="100" y="143">Aug</text><text x="142" y="143">Sep</text><text x="184" y="143">Oct</text><text x="226" y="143">Nov</text></g></svg>
+   <div class="mute">■ In  ■ Out · Avg surplus <b class="pos">$1,140/mo</b></div>
+   <div class="card"><b>November</b>
+    <div class="li"><span>Income</span><span class="pos">+$4,820</span></div>
+    <div class="li"><span>Essentials</span><span>−$1,980</span></div>
+    <div class="li"><span>Lifestyle</span><span>−$760</span></div>
+    <div class="li"><span>Bills &amp; subs</span><span>−$450</span></div>
+    <div class="li"><span><b>Net</b></span><b class="pos">+$1,630</b></div></div>
+  </div><div class="tabs"><div>Home</div><div class="on">Spending</div><div>Goals</div><div>Accounts</div><div>More</div></div></div>
+ </div>
+ <div class="opt"><div class="tag">Option B <span>· Running balance + upcoming</span></div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>Cash flow</span><span class="mute">Nov ▾</span></div>
+   <div class="mute">Everyday balance (ASB + BNZ)</div><div class="big">$2,104</div>
+   <svg viewBox="0 0 260 110"><line class="ax" x1="0" y1="100" x2="260" y2="100"/><polyline class="ln" points="0,70 30,30 60,40 90,55 120,62 150,28 160,32"/><polyline class="ln2" points="160,32 190,50 220,60 260,25"/><line x1="160" y1="0" x2="160" y2="100" class="ax" stroke-dasharray="2 2"/><text x="164" y="10" font-size="9" fill="currentColor">today</text></svg>
+   <div class="mute">Solid = actual · dashed = projected with upcoming bills</div>
+   <div class="card"><b>Coming up</b>
+    <div class="li"><span><span class="ic"></span>Rent · Mon</span><span class="neg">−$620</span></div>
+    <div class="li"><span><span class="ic"></span>Mercury power · 14th</span><span class="neg">−$148</span></div>
+    <div class="li"><span><span class="ic"></span>Netflix · 18th</span><span class="neg">−$25.99</span></div>
+    <div class="li"><span><span class="ic"></span>Salary · Fri</span><span class="pos">+$2,410</span></div></div>
+  </div><div class="tabs"><div>Home</div><div class="on">Spending</div><div>Goals</div><div>Accounts</div><div>More</div></div></div>
+ </div>
+</div>
+
+<!-- ============ 3 SPENDING ============ -->
+<h2>3. Spending breakdown</h2>
+<div class="row">
+ <div class="opt"><div class="tag">Option A <span>· Donut + category list</span></div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>Spending</span><span class="mute">Nov ▾</span></div>
+   <svg viewBox="0 0 120 120" style="width:160px;margin:0 auto"><circle cx="60" cy="60" r="44" fill="none" stroke="var(--ink)" stroke-width="18" stroke-dasharray="80 197" transform="rotate(-90 60 60)"/><circle cx="60" cy="60" r="44" fill="none" stroke="var(--accent)" stroke-width="18" stroke-dasharray="55 222" stroke-dashoffset="-80" transform="rotate(-90 60 60)"/><circle cx="60" cy="60" r="44" fill="none" stroke="var(--warn)" stroke-width="18" stroke-dasharray="40 237" stroke-dashoffset="-135" transform="rotate(-90 60 60)"/><circle cx="60" cy="60" r="44" fill="none" stroke="var(--line)" stroke-width="18" stroke-dasharray="102 175" stroke-dashoffset="-175" transform="rotate(-90 60 60)"/><text x="60" y="64" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">$3,190</text></svg>
+   <div class="card">
+    <div class="li"><span><span class="ic"></span>Rent</span><span>$1,240 <span class="mute">39%</span></span></div>
+    <div class="li"><span><span class="ic"></span>Groceries</span><span>$612 <span class="mute">19%</span></span></div>
+    <div class="li"><span><span class="ic"></span>Eating out</span><span>$344 <span class="neg">▲23%</span></span></div>
+    <div class="li"><span><span class="ic"></span>Transport</span><span>$210 <span class="mute">7%</span></span></div>
+    <div class="li"><span><span class="ic"></span>Subscriptions</span><span>$96 <span class="mute">3%</span></span></div></div>
+   <div class="card mute">💡 Eating out is $64 above your 3-month average</div>
+  </div><div class="tabs"><div>Home</div><div class="on">Spending</div><div>Goals</div><div>Accounts</div><div>More</div></div></div>
+ </div>
+ <div class="opt"><div class="tag">Option B <span>· Budgets with progress bars</span></div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>Budgets</span><span class="mute">Pay cycle ▾</span></div>
+   <div class="mute">Fortnight 7–20 Nov · 9 days left</div>
+   <div class="card"><div class="li" style="border:0"><span>Groceries</span><span>$306 / $400</span></div><div class="bar"><i style="width:76%"></i></div></div>
+   <div class="card"><div class="li" style="border:0"><span>Eating out</span><span class="neg">$172 / $150</span></div><div class="bar"><i style="width:100%;background:var(--warn)"></i></div></div>
+   <div class="card"><div class="li" style="border:0"><span>Transport</span><span>$105 / $160</span></div><div class="bar"><i style="width:65%"></i></div></div>
+   <div class="card"><div class="li" style="border:0"><span>Fun money</span><span>$40 / $120</span></div><div class="bar"><i style="width:33%"></i></div></div>
+   <div class="card"><div class="li" style="border:0"><span>Unbudgeted</span><span>$58</span></div></div>
+   <div class="btn ghost">+ Add budget</div>
+  </div><div class="tabs"><div>Home</div><div class="on">Spending</div><div>Goals</div><div>Accounts</div><div>More</div></div></div>
+ </div>
+</div>
+
+<!-- ============ 4 TRANSACTIONS ============ -->
+<h2>4. Transactions and categorising</h2>
+<div class="row">
+ <div class="opt"><div class="tag">Transactions list</div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>Transactions</span><span class="mute">⚲</span></div>
+   <div class="field">Search merchant, amount…</div>
+   <div class="chips"><span class="chip on">All</span><span class="chip">ASB</span><span class="chip">BNZ</span><span class="chip">Uncategorised (4)</span></div>
+   <div class="mute">Today</div>
+   <div class="li"><span><span class="ic"></span>Countdown Ponsonby<br><span class="mute">Groceries · ASB</span></span><span class="neg">−$86.40</span></div>
+   <div class="li"><span><span class="ic"></span>Z Energy<br><span class="mute">Transport · BNZ</span></span><span class="neg">−$72.10</span></div>
+   <div class="mute">Yesterday</div>
+   <div class="li"><span><span class="ic"></span>Transfer to Rapid Save<br><span class="mute">Transfer · excluded</span></span><span class="mute">$450.00</span></div>
+   <div class="li"><span><span class="ic"></span>UBER *EATS<br><span class="mute neg">Uncategorised</span></span><span class="neg">−$38.50</span></div>
+   <div class="li"><span><span class="ic"></span>Salary ACME LTD<br><span class="mute">Income · ASB</span></span><span class="pos">+$2,410</span></div>
+  </div><div class="tabs"><div>Home</div><div class="on">Spending</div><div>Goals</div><div>Accounts</div><div>More</div></div></div>
+ </div>
+ <div class="opt"><div class="tag">Tap to categorise <span>· bottom sheet</span></div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>Transactions</span></div>
+   <div class="li"><span><span class="ic"></span>UBER *EATS</span><span>−$38.50</span></div>
+  </div>
+  <div class="dim"></div>
+  <div class="sheet">
+   <b>UBER *EATS · −$38.50</b><div class="mute">6 Nov · ASB Visa</div>
+   <div class="chips"><span class="chip on">Eating out</span><span class="chip">Groceries</span><span class="chip">Transport</span><span class="chip">Fun</span><span class="chip">Bills</span><span class="chip">+ New</span></div>
+   <div class="li"><span>☑ Always categorise "UBER *EATS" like this</span></div>
+   <div class="li"><span>Split transaction</span><span class="mute">›</span></div>
+   <div class="li"><span>Mark as transfer</span><span class="mute">›</span></div>
+   <div class="btn">Save</div>
+  </div></div>
+ </div>
+</div>
+
+<!-- ============ 5 GOALS ============ -->
+<h2>5. Goals and forecast</h2>
+<div class="row">
+ <div class="opt"><div class="tag">Goals list</div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>Goals</span><span>＋</span></div>
+   <div class="card"><div class="li" style="border:0"><b>🏠 House deposit</b><span class="pos">On track</span></div><div class="bar"><i style="width:42%"></i></div><div class="mute">$12,600 / $30,000 · target Dec 2027 · est. Sep 2027</div></div>
+   <div class="card"><div class="li" style="border:0"><b>🛟 Emergency fund</b><span class="pos">Done ✓</span></div><div class="bar"><i style="width:100%"></i></div><div class="mute">$6,000 / $6,000</div></div>
+   <div class="card"><div class="li" style="border:0"><b>✈️ Japan trip</b><span class="neg">Behind</span></div><div class="bar"><i style="width:18%;background:var(--warn)"></i></div><div class="mute">$720 / $4,000 · target Jun 2027 · need +$65/mo</div></div>
+  </div><div class="tabs"><div>Home</div><div>Spending</div><div class="on">Goals</div><div>Accounts</div><div>More</div></div></div>
+ </div>
+ <div class="opt"><div class="tag">Option A <span>· Goal detail: stacked forecast</span></div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>‹ House deposit</span><span class="mute">Edit</span></div>
+   <div class="big">$12,600 <span class="mute">/ $30,000</span></div>
+   <div class="pos"><b>Reach it Sep 2027</b> <span class="mute">· 3 months early</span></div>
+   <svg viewBox="0 0 260 130"><line class="ax" x1="0" y1="120" x2="260" y2="120"/><line class="ax" x1="0" y1="20" x2="260" y2="20" stroke-dasharray="3 3"/><text x="2" y="16" font-size="9" fill="currentColor">$30k target</text>
+    <polygon class="fa" points="0,120 0,78 260,78 260,120"/>
+    <polygon class="fk" opacity=".55" points="0,78 260,30 260,78"/>
+    <polygon class="fi" opacity=".8" points="90,78 90,74 260,22 260,30"/>
+    <line x1="90" y1="0" x2="90" y2="120" class="ax" stroke-dasharray="2 2"/><text x="93" y="34" font-size="8" fill="currentColor">TD matures</text></svg>
+   <div class="mute">■ Saved now  ■ Contributions  ■ Interest (after RWT)</div>
+   <div class="card"><b>What's counted</b>
+    <div class="li"><span>BNZ Rapid Save @ 3.0%</span><span>$2,600</span></div>
+    <div class="li"><span>BNZ TD 12m @ 4.6%</span><span>$10,000</span></div>
+    <div class="li"><span>Contribution</span><span>$900/mo</span></div>
+    <div class="li"><span>Interest to goal date</span><span class="pos">+$1,012</span></div></div>
+  </div><div class="tabs"><div>Home</div><div>Spending</div><div class="on">Goals</div><div>Accounts</div><div>More</div></div></div>
+ </div>
+ <div class="opt"><div class="tag">Option B <span>· Goal detail: timeline + what-if</span></div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>‹ House deposit</span><span class="mute">Edit</span></div>
+   <svg viewBox="0 0 260 100"><line class="ax" x1="0" y1="90" x2="260" y2="90"/><polyline class="ln" points="0,70 70,58"/><polyline class="ln2" points="70,58 120,44 170,30 210,14 260,4"/><line x1="0" y1="14" x2="260" y2="14" class="ax" stroke-dasharray="3 3"/><circle cx="210" cy="14" r="4" class="fk"/></svg>
+   <div class="card"><b>What if…</b>
+    <div class="mute">Monthly contribution</div>
+    <svg viewBox="0 0 260 20"><line x1="0" y1="10" x2="260" y2="10" class="ax" stroke-width="4"/><line x1="0" y1="10" x2="150" y2="10" stroke="var(--ink)" stroke-width="4"/><circle cx="150" cy="10" r="8" class="fi"/></svg>
+    <div class="li" style="border:0"><span>$900 → <b>$1,050</b></span><span class="pos">Jul 2027 (−2 mo)</span></div>
+    <div class="mute">TD rollover rate at maturity</div>
+    <div class="chips"><span class="chip">4.0%</span><span class="chip on">4.6%</span><span class="chip">5.0%</span><span class="chip">Cash out</span></div></div>
+   <div class="card"><b>Timeline</b>
+    <div class="li"><span>Mar 2027</span><span>TD matures +$322 interest</span></div>
+    <div class="li"><span>Sep 2027</span><span class="pos">🎯 Goal reached</span></div>
+    <div class="li"><span>Dec 2027</span><span class="mute">Target date</span></div></div>
+  </div><div class="tabs"><div>Home</div><div>Spending</div><div class="on">Goals</div><div>Accounts</div><div>More</div></div></div>
+ </div>
+</div>
+
+<!-- ============ 6 TERM DEPOSITS ============ -->
+<h2>6. Term deposits</h2>
+<div class="row">
+ <div class="opt"><div class="tag">TD list</div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>Term deposits</span><span>＋</span></div>
+   <div class="card"><div class="mute">Total invested</div><div class="big">$25,000</div><div class="mute">Interest this year (after RWT): <b class="pos">$812</b></div></div>
+   <div class="card"><div class="li" style="border:0"><b>BNZ · 12 months</b><span>4.60%</span></div>
+    <div class="mute">$10,000 · matures 14 Mar 2027 (127 days)</div><div class="bar"><i style="width:65%"></i></div>
+    <div class="mute">At maturity: +$322 → reinvest · 🎯 House deposit</div></div>
+   <div class="card"><div class="li" style="border:0"><b>ASB · 6 months</b><span>4.35%</span></div>
+    <div class="mute">$15,000 · matures 2 Dec 2026 (25 days)</div><div class="bar"><i style="width:86%"></i></div>
+    <div class="mute neg">⏰ Maturing soon: decide by 25 Nov</div></div>
+  </div><div class="tabs"><div>Home</div><div>Spending</div><div>Goals</div><div class="on">Accounts</div><div>More</div></div></div>
+ </div>
+ <div class="opt"><div class="tag">Add/edit TD</div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>‹ New term deposit</span></div>
+   <div class="chips"><span class="chip on">BNZ</span><span class="chip">ASB</span><span class="chip">Other</span></div>
+   <div class="grid2"><div class="field"><b>Amount</b>$10,000</div><div class="field"><b>Rate p.a.</b>4.60%</div>
+   <div class="field"><b>Start</b>14 Mar 2026</div><div class="field"><b>Term</b>12 months</div></div>
+   <div class="field"><b>Interest paid</b>At maturity ▾</div>
+   <div class="field"><b>RWT rate</b>30% (from settings) ▾</div>
+   <div class="field"><b>At maturity</b>Reinvest principal + interest ▾</div>
+   <div class="field"><b>Count towards goal</b>🏠 House deposit ▾</div>
+   <div class="card mute">Estimated interest: $460 gross · <b class="pos">$322 after RWT</b></div>
+   <div class="btn">Save</div>
+  </div></div>
+ </div>
+</div>
+
+<!-- ============ 7 ACCOUNTS ============ -->
+<h2>7. Accounts and connecting banks</h2>
+<div class="row">
+ <div class="opt"><div class="tag">Accounts</div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>Accounts</span><span>＋</span></div>
+   <div class="mute">BNZ · synced 2 min ago ⟳</div>
+   <div class="card"><div class="li"><span><span class="ic"></span>Everyday</span><span>$1,240</span></div><div class="li"><span><span class="ic"></span>Rapid Save</span><span>$8,000</span></div><div class="li"><span><span class="ic"></span>Term deposit</span><span>$10,000</span></div></div>
+   <div class="mute">ASB · synced 2 min ago ⟳</div>
+   <div class="card"><div class="li"><span><span class="ic"></span>Streamline</span><span>$864</span></div><div class="li"><span><span class="ic"></span>Visa Light</span><span class="neg">−$624</span></div><div class="li"><span><span class="ic"></span>Term deposit</span><span>$15,000</span></div></div>
+   <div class="mute">Manual</div>
+   <div class="card"><div class="li"><span><span class="ic"></span>KiwiSaver</span><span>$18,400</span></div></div>
+  </div><div class="tabs"><div>Home</div><div>Spending</div><div>Goals</div><div class="on">Accounts</div><div>More</div></div></div>
+ </div>
+ <div class="opt"><div class="tag">Add a bank</div>
+  <div class="phone"><div class="scr">
+   <div class="top"><span>‹ Add accounts</span></div>
+   <div class="card"><b>🔗 Connect with Akahu</b><div class="mute">Automatic sync for BNZ, ASB and other NZ banks. Read-only.</div><div class="btn" style="margin-top:8px">Connect</div></div>
+   <div class="card"><b>📄 Import CSV</b><div class="mute">Export from BNZ or ASB internet banking and import it here.</div>
+    <div class="chips" style="margin-top:6px"><span class="chip">BNZ format</span><span class="chip">ASB format</span><span class="chip on">Auto-detect</span></div>
+    <div class="btn ghost" style="margin-top:8px">Choose file</div></div>
+   <div class="card"><b>✏️ Manual account</b><div class="mute">For a term deposit, KiwiSaver, cash, or a loan</div></div>
+  </div></div>
+ </div>
+</div>
+
+<!-- ============ 8 NAV ============ -->
+<h2>8. Navigation</h2>
+<div class="row">
+ <div class="opt"><div class="tag">Option A <span>· 5 tabs (shown above)</span></div><div class="note">Home · Spending · Goals · Accounts · More (settings, rules, categories, export)</div></div>
+ <div class="opt"><div class="tag">Option B <span>· 4 tabs + quick add</span></div><div class="note">Home · Spending · ＋ (add a manual transaction or TD) · Goals · Accounts. Settings go behind the avatar at the top right.</div></div>
+</div>
+
+</body>
+</html>
