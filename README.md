@@ -17,6 +17,8 @@ npm test              # forecast + analytics unit tests
 npm run typecheck
 ```
 
+![Screens](docs/screenshots.png)
+
 ## What's in it
 
 | Screen | Wireframe | What it does |
