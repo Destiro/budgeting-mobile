@@ -1,3 +1,4 @@
+import { monthlySavingsInflow } from '../lib/analytics';
 import { forecastGoal, requiredMonthlyContribution, type ForecastInput } from '../lib/forecast';
 import { parseISO } from '../lib/dates';
 import type { Goal } from '../lib/types';
@@ -9,7 +10,9 @@ export function goalInput(state: State, goal: Goal, overrides: Partial<ForecastI
     start: state.today,
     target: goal.target,
     targetDate: parseISO(goal.targetDate),
-    monthlyContribution: goal.monthlyContribution,
+    monthlyContribution: goal.autoContribution
+      ? Math.round(monthlySavingsInflow(state.transactions, goal.accountIds, 3, state.today))
+      : goal.monthlyContribution,
     savings: linked.map((a) => ({ balance: Math.max(0, a.balance), rate: a.interestRate ?? 0 })),
     termDeposits: state.termDeposits.filter((t) => t.goalId === goal.id),
     rwt: state.settings.rwt,

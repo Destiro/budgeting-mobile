@@ -125,3 +125,37 @@ export function merchantKey(description: string): string {
     .replace(/\s+(AUCKLAND|WELLINGTON|CHRISTCHURCH|NZ)\b.*$/i, '')
     .trim();
 }
+
+/**
+ * Average per month that moved into the given accounts by transfer, over the last `months`
+ * complete months (or fewer, if your history is shorter). Money moved between two of the given
+ * accounts is not new saving, so it is ignored.
+ */
+export function monthlySavingsInflow(
+  transactions: Transaction[],
+  accountIds: string[],
+  months: number,
+  today: Date,
+): number {
+  if (!accountIds.length || !transactions.length) return 0;
+  const ids = new Set(accountIds);
+  const byId = new Map(transactions.map((t) => [t.id, t]));
+  const end = startOfMonth(today);
+  const earliest = transactions.reduce((m, t) => (t.date < m ? t.date : m), transactions[0].date);
+  const first = startOfMonth(parseISO(earliest));
+  // Only count months that start after the first transaction's month began, so a new user isn't averaged over empty months.
+  const available = Math.max(1, (end.getFullYear() - first.getFullYear()) * 12 + end.getMonth() - first.getMonth() - 1);
+  const used = Math.min(months, available);
+  const from = addMonths(end, -used);
+
+  let total = 0;
+  for (const t of transactions) {
+    if (t.amount <= 0 || t.categoryId !== TRANSFER_CATEGORY || !ids.has(t.accountId)) continue;
+    const d = parseISO(t.date);
+    if (d < from || d >= end) continue;
+    const partner = t.transferPairId ? byId.get(t.transferPairId) : undefined;
+    if (partner && ids.has(partner.accountId)) continue;
+    total += t.amount;
+  }
+  return total / used;
+}

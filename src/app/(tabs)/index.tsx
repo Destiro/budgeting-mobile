@@ -60,7 +60,7 @@ export default function Home() {
             <Row
               key={g.label}
               left={g.label}
-              sub={g.items.map((a) => (a.bank === 'Other' ? a.name : `${a.bank} ${a.name}`)).filter((t) => t !== g.label).join(' · ')}
+              sub={g.items.length > 2 ? `${g.items.length} accounts` : g.items.map((a) => (a.bank === 'Other' ? a.name : `${a.bank} ${a.name}`)).filter((t) => t !== g.label).join(' · ')}
               right={formatMoney(g.items.reduce((sum, a) => sum + a.balance, 0), true)}
               rightStyle={g.label === 'Credit cards' ? s.neg : undefined}
             />

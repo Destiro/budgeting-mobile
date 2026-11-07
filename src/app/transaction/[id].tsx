@@ -20,6 +20,8 @@ export default function Categorise() {
 
   const account = state.accounts.find((a) => a.id === tx.accountId);
   const key = merchantKey(tx.description);
+  const pair = tx.transferPairId ? state.transactions.find((t) => t.id === tx.transferPairId) : undefined;
+  const pairAccount = pair ? state.accounts.find((a) => a.id === pair.accountId) : undefined;
   const matching = state.transactions.filter(
     (t) => t.id !== tx.id && t.description.toLowerCase().includes(key.toLowerCase()) && !t.categoryId,
   ).length;
@@ -44,6 +46,12 @@ export default function Categorise() {
         onChange={setCategoryId}
         options={state.categories.map((c) => ({ value: c.id, label: `${c.emoji} ${c.name}` }))}
       />
+      {pair && pairAccount && categoryId === 'transfer' ? (
+        <T.Mute>
+          Matched with {formatSigned(pair.amount)} {pair.amount > 0 ? 'into' : 'out of'} {pairAccount.bank} {pairAccount.name} on{' '}
+          {shortDate(parseISO(pair.date))}. Both sides are left out of income and spending. Pick another category if this isn't a transfer.
+        </T.Mute>
+      ) : null}
       {categoryId === 'transfer' ? (
         <T.Mute>Transfers between your own accounts are left out of income and spending.</T.Mute>
       ) : null}

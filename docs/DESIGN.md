@@ -30,6 +30,12 @@ Recommendation: start with **C**. CSV import is quick to build and gets history 
 
 Transfers between your own accounts (for example ASB everyday to BNZ savings) are detected and **excluded from spending**, so they don't double-count.
 
+**How transfers are found.** Two transactions are treated as one transfer when they have the same amount, opposite signs, sit in different accounts and fall within 3 days of each other (ASB to BNZ can take a day to arrive). Both sides are tagged and left out of income and spending. Credit card repayments work the same way: money out of an account, the same amount onto the card. Spending is counted on the day of the card purchase, not when the card is paid off. Categories you set yourself are never overwritten, and you can un-mark a match from the transaction screen.
+
+**Example payday flow** (what the demo data follows): pay lands in ASB → part moves to the ASB rent account, which pays the rent → the rest moves to BNZ everyday → part moves to BNZ savings, and the rest pays off the BNZ credit card, which carries most of the day-to-day spending. Only the pay (in) and the real purchases, rent and bills (out) are counted. Everything in between is a transfer.
+
+**Import every account that is part of the flow.** If only one bank is imported, the other half of a transfer is missing and money arriving from the other bank would look like income. Mark such a payment as a transfer once and it stays that way.
+
 ---
 
 ## 3. Feature list
@@ -133,7 +139,7 @@ Settings       pay_frequency, payday_anchor, rwt_rate, currency
 
 ## 7. Roadmap
 
-- ✅ **Done: UI and logic on demo data.** All chosen screens, forecast engine (with tests), TD interest after RWT, cash flow, budgets, categorisation rules
+- ✅ **Done: UI and logic on demo data.** All chosen screens, forecast engine (with tests), TD interest after RWT, cash flow, budgets, categorisation rules, automatic transfer matching, and goal contributions taken from what you actually move into savings
 1. **M1: Save data on the phone.** SQLite (expo-sqlite) in place of the in-memory store
 2. **M2: CSV import.** BNZ and ASB export formats, duplicate detection, transfer detection
 3. **M3: Manual accounts.** Add and edit savings, KiwiSaver and loan accounts; edit balances

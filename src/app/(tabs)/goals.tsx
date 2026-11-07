@@ -36,7 +36,7 @@ export default function Goals() {
             </T.Mute>
             {behind && sum.required !== null ? (
               <T.Mute style={s.neg}>
-                Save {formatMoney(sum.required, true)}/month (+{formatMoney(sum.required - g.monthlyContribution, true)}) to hit the target date
+                Save {formatMoney(sum.required, true)}/month (+{formatMoney(sum.required - sum.input.monthlyContribution, true)}) to hit the target date
               </T.Mute>
             ) : null}
           </Card>

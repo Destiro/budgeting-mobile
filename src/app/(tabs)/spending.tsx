@@ -214,6 +214,7 @@ function Transactions() {
   const [limit, setLimit] = useState(PAGE);
   const bankOf = useMemo(() => new Map(state.accounts.map((a) => [a.id, a])), [state.accounts]);
   const catOf = useMemo(() => new Map(state.categories.map((c) => [c.id, c])), [state.categories]);
+  const txById = useMemo(() => new Map(state.transactions.map((t) => [t.id, t])), [state.transactions]);
   const uncategorised = state.transactions.filter((t) => !t.categoryId).length;
 
   const rows = state.transactions.filter((t) => {
@@ -262,12 +263,23 @@ function Transactions() {
             {g.items.map((t, i) => {
               const cat = t.categoryId ? catOf.get(t.categoryId) : undefined;
               const acct = bankOf.get(t.accountId);
+              const other = t.transferPairId ? bankOf.get(txById.get(t.transferPairId)?.accountId ?? '') : undefined;
+              // "Pay account → Rent account", with the bank named only when it changes.
+              const from = t.amount < 0 ? acct : other;
+              const to = t.amount < 0 ? other : acct;
+              const name = (a: typeof acct, withBank: boolean) => (withBank ? `${a?.bank} ${a?.name}` : a?.name);
+              const label =
+                cat?.id === 'transfer'
+                  ? from && to
+                    ? `${name(from, from.bank !== to.bank)} → ${name(to, from.bank !== to.bank)}`
+                    : 'Transfer'
+                  : `${cat?.name ?? 'Uncategorised'} · ${acct?.bank} ${acct?.name}`;
               return (
                 <Row
                   key={t.id}
                   icon={cat?.emoji ?? '❔'}
                   left={t.description}
-                  sub={`${cat ? cat.name : 'Uncategorised'} · ${acct?.bank} ${acct?.name}`}
+                  sub={label}
                   right={formatSigned(t.amount)}
                   rightStyle={cat?.id === 'transfer' ? { color: colors.mute } : t.amount > 0 ? s.pos : undefined}
                   onPress={() => router.push({ pathname: '/transaction/[id]', params: { id: t.id } })}

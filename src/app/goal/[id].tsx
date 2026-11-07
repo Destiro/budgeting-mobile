@@ -77,7 +77,7 @@ export default function GoalDetail() {
         </View>
         {status === 'behind' && required !== null ? (
           <T.Mute style={{ marginTop: 4 }}>
-            To hit {monthLabel(targetDate, true)}, save {formatMoney(required, true)}/month instead of {formatMoney(goal.monthlyContribution, true)}.
+            To hit {monthLabel(targetDate, true)}, save {formatMoney(required, true)}/month instead of {formatMoney(input.monthlyContribution, true)}.
           </T.Mute>
         ) : null}
       </View>
@@ -121,7 +121,11 @@ export default function GoalDetail() {
             onPress={() => router.push({ pathname: '/td/edit', params: { id: td.id } })}
           />
         ))}
-        <Row left="Contribution" right={`${formatMoney(goal.monthlyContribution, true)}/mo`} />
+        <Row
+          left="Contribution"
+          sub={goal.autoContribution ? 'avg of your last 3 months of transfers' : undefined}
+          right={`${formatMoney(input.monthlyContribution, true)}/mo`}
+        />
         <Row
           left={`Interest by ${monthLabel(targetDate, true)}`}
           sub={`after ${Math.round(state.settings.rwt * 100)}% RWT`}

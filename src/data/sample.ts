@@ -1,8 +1,17 @@
 /**
  * Demo data so every screen has something to show before a bank is connected.
  * Generated relative to `today` with a seeded random, so it is the same on every launch.
+ *
+ * It follows one payday flow:
+ *   pay → ASB pay account → ASB rent account (rent paid from there)
+ *                         → BNZ everyday → BNZ Rapid Save (savings)
+ *                                        → BNZ credit card (repayment)
+ * with most day-to-day spending on the BNZ credit card.
+ *
+ * Transfers are generated with no category on purpose: the app's transfer matching finds them.
  */
-import { addDays, addMonths, toISO } from '../lib/dates';
+import { addDays, addMonths, daysBetween, toISO } from '../lib/dates';
+import { roundCents } from '../lib/money';
 import type { Account, Budget, Category, Goal, Rule, Settings, TermDeposit, Transaction } from '../lib/types';
 
 export const categories: Category[] = [
@@ -20,19 +29,21 @@ export const categories: Category[] = [
 ];
 
 export const accounts: Account[] = [
+  { id: 'asb-pay', bank: 'ASB', name: 'Pay account', type: 'everyday', balance: 290.12, source: 'manual' },
+  { id: 'asb-rent', bank: 'ASB', name: 'Rent account', type: 'everyday', balance: 85.4, source: 'manual' },
   { id: 'bnz-everyday', bank: 'BNZ', name: 'Everyday', type: 'everyday', balance: 1240.18, source: 'manual' },
-  { id: 'bnz-rapid', bank: 'BNZ', name: 'Rapid Save', type: 'savings', balance: 2600, interestRate: 0.03, source: 'manual' },
-  { id: 'asb-streamline', bank: 'ASB', name: 'Streamline', type: 'everyday', balance: 864.52, source: 'manual' },
-  { id: 'asb-savings', bank: 'ASB', name: 'Savings Plus', type: 'savings', balance: 720, interestRate: 0.025, source: 'manual' },
-  { id: 'asb-visa', bank: 'ASB', name: 'Visa Light', type: 'credit', balance: -624.3, source: 'manual' },
+  { id: 'bnz-savings', bank: 'BNZ', name: 'Rapid Save', type: 'savings', balance: 2600, interestRate: 0.03, source: 'manual' },
+  { id: 'bnz-credit', bank: 'BNZ', name: 'Credit Card', type: 'credit', balance: -624.3, source: 'manual' },
   { id: 'kiwisaver', bank: 'Other', name: 'KiwiSaver', type: 'kiwisaver', balance: 18400, source: 'manual' },
 ];
+
+/** Payday is a Friday; this is the most recent one on or before `today`. */
+export const lastPayday = (today: Date) => addDays(today, -((today.getDay() + 2) % 7));
 
 export const defaultSettings = (today: Date): Settings => ({
   rwt: 0.3,
   budgetPeriod: 'fortnightly',
-  // Payday is the most recent Friday.
-  paydayAnchor: toISO(addDays(today, -((today.getDay() + 2) % 7))),
+  paydayAnchor: toISO(lastPayday(today)),
 });
 
 export const budgets: Budget[] = [
@@ -54,6 +65,7 @@ export const rules: Rule[] = [
   { id: 'r8', match: 'MERCURY', categoryId: 'bills' },
   { id: 'r9', match: 'ONE NZ', categoryId: 'bills' },
   { id: 'r10', match: 'SALARY', categoryId: 'income' },
+  { id: 'r11', match: 'RENT J SMITH', categoryId: 'rent' },
 ];
 
 export function sampleGoals(today: Date): Goal[] {
@@ -65,16 +77,9 @@ export function sampleGoals(today: Date): Goal[] {
       target: 30000,
       targetDate: toISO(addMonths(today, 22)),
       monthlyContribution: 900,
-      accountIds: ['bnz-rapid'],
-    },
-    {
-      id: 'japan',
-      name: 'Japan trip',
-      emoji: '✈️',
-      target: 4000,
-      targetDate: toISO(addMonths(today, 7)),
-      monthlyContribution: 400,
-      accountIds: ['asb-savings'],
+      // Savings grow by whatever is moved into Rapid Save each payday.
+      autoContribution: true,
+      accountIds: ['bnz-savings'],
     },
   ];
 }
@@ -122,57 +127,78 @@ export function sampleTransactions(today: Date): Transaction[] {
   const pick = <T,>(xs: T[]) => xs[Math.floor(rand() * xs.length)];
   const out: Transaction[] = [];
   let n = 0;
+
   const add = (d: Date, accountId: string, amount: number, description: string, categoryId: string | null) => {
-    if (d > today) return;
-    out.push({ id: `tx${++n}`, accountId, date: toISO(d), amount, description, categoryId });
+    out.push({ id: `tx${++n}`, accountId, date: toISO(d), amount: roundCents(amount), description, categoryId });
   };
 
-  const start = addMonths(today, -6);
-  const lastFriday = addDays(today, -((today.getDay() + 2) % 7));
-  for (let d = new Date(start); d <= today; d = addDays(d, 1)) {
+  /** Moves money between two of your accounts. Neither side is categorised; matching finds them. */
+  const move = (d: Date, from: string, to: string, amount: number, outDesc: string, inDesc: string, lagDays = 0) => {
+    const arrives = addDays(d, lagDays);
+    if (arrives > today) return false; // still in transit, so leave both sides out
+    add(d, from, -amount, outDesc, null);
+    add(arrives, to, amount, inDesc, null);
+    return true;
+  };
+
+  let cardOwing = 0;
+  const onCard = (d: Date, amount: number, description: string, categoryId: string | null) => {
+    add(d, 'bnz-credit', -amount, description, categoryId);
+    cardOwing = roundCents(cardOwing + amount);
+  };
+
+  const payday = lastPayday(today);
+  for (let d = addMonths(today, -6); d <= today; d = addDays(d, 1)) {
     const dow = d.getDay();
     const dom = d.getDate();
-    const sinceFriday = Math.round((+lastFriday - +d) / 86_400_000);
-    const isPayday = dow === 5 && sinceFriday % 14 === 0;
+    /** 0 on payday, 1 the day after, and so on through the fortnight */
+    const k = ((daysBetween(payday, d) % 14) + 14) % 14;
 
-    if (isPayday) {
-      add(d, 'asb-streamline', 2410, 'ACME LTD SALARY', 'income');
-      add(d, 'asb-streamline', -1300, 'TRANSFER TO BNZ EVERYDAY', 'transfer');
-      add(d, 'bnz-everyday', 1300, 'TRANSFER FROM ASB STREAMLINE', 'transfer');
+    if (k === 0) {
+      add(d, 'asb-pay', 2410, 'ACME LTD SALARY', 'income');
+      // Rent money goes to the rent account, and the rent is paid from there.
+      if (move(d, 'asb-pay', 'asb-rent', 720, 'TRANSFER TO RENT ACCOUNT', 'TRANSFER FROM PAY ACCOUNT')) {
+        add(d, 'asb-rent', -720, 'RENT J SMITH', 'rent');
+      }
+      // The rest goes across to BNZ, arriving the next day.
+      move(d, 'asb-pay', 'bnz-everyday', 1500, 'TRANSFER TO BNZ EVERYDAY', 'ASB ACME PAY TRANSFER', 1);
     }
-    if (dow === 1) add(d, 'bnz-everyday', -310, 'RENT J SMITH', 'rent');
+
+    // Day-to-day spending is mostly on the BNZ credit card.
     if (dow === 6 || (dow === 3 && rand() < 0.4)) {
       const shop = pick(['COUNTDOWN PONSONBY', "PAK'NSAVE ALBANY", 'NEW WORLD VICTORIA PARK']);
-      add(d, 'asb-visa', -between(45, 165), shop, 'groceries');
+      onCard(d, between(45, 165), shop, 'groceries');
     }
     if (rand() < 0.22) {
       const place = pick(['UBER *EATS', 'BURGERFUEL K RD', 'ODETTES EATERY', 'CHICKEN CHOP SHOP', 'DEVONPORT CAFE']);
-      add(d, 'asb-visa', -between(12, 62), place, 'eating-out');
+      onCard(d, between(12, 62), place, 'eating-out');
     }
-    if (dow === 4 && rand() < 0.6) add(d, 'bnz-everyday', -between(58, 92), 'Z ENERGY GREY LYNN', 'transport');
-    if (dow === 2 && rand() < 0.5) add(d, 'bnz-everyday', -20, 'AT HOP TOP UP', 'transport');
-    if (rand() < 0.06) add(d, 'asb-visa', -between(20, 140), pick(['THE WAREHOUSE', 'KMART SYLVIA PARK', 'REBEL SPORT']), 'shopping');
-    if (rand() < 0.05) add(d, 'asb-visa', -between(18, 80), pick(['EVENT CINEMAS', 'TICKETMASTER NZ', 'LEISURE CENTRE']), 'fun');
-    if (rand() < 0.02) add(d, 'bnz-everyday', -between(15, 60), 'UNICHEM PHARMACY', 'health');
+    if (dow === 4 && rand() < 0.6) onCard(d, between(58, 92), 'Z ENERGY GREY LYNN', 'transport');
+    if (dow === 2 && rand() < 0.5) onCard(d, 20, 'AT HOP TOP UP', 'transport');
+    if (rand() < 0.06) onCard(d, between(20, 140), pick(['THE WAREHOUSE', 'KMART SYLVIA PARK', 'REBEL SPORT']), 'shopping');
+    if (rand() < 0.05) onCard(d, between(18, 80), pick(['EVENT CINEMAS', 'TICKETMASTER NZ', 'LEISURE CENTRE']), 'fun');
+    if (rand() < 0.02) onCard(d, between(15, 60), 'UNICHEM PHARMACY', 'health');
+    if (dom === 18) onCard(d, 25.99, 'NETFLIX.COM', 'subscriptions');
+    if (dom === 3) onCard(d, 19.99, 'SPOTIFY P3B1', 'subscriptions');
 
+    // A couple of bills come straight out of BNZ everyday.
     if (dom === 14) add(d, 'bnz-everyday', -between(132, 178), 'MERCURY ENERGY', 'bills');
     if (dom === 20) add(d, 'bnz-everyday', -65, 'ONE NZ MOBILE', 'bills');
-    if (dom === 18) add(d, 'asb-visa', -25.99, 'NETFLIX.COM', 'subscriptions');
-    if (dom === 3) add(d, 'asb-visa', -19.99, 'SPOTIFY P3B1', 'subscriptions');
-    if (dom === 1) {
-      add(d, 'bnz-everyday', -900, 'TRANSFER TO RAPID SAVE', 'transfer');
-      add(d, 'bnz-rapid', 900, 'TRANSFER FROM EVERYDAY', 'transfer');
-    }
-    if (dom === 25) {
-      add(d, 'asb-streamline', -600, 'VISA PAYMENT', 'transfer');
-      add(d, 'asb-visa', 600, 'PAYMENT RECEIVED', 'transfer');
+
+    // Two days after payday: save, then pay off the card.
+    if (k === 2) {
+      move(d, 'bnz-everyday', 'bnz-savings', 450, 'TRANSFER TO RAPID SAVE', 'TRANSFER FROM EVERYDAY');
+      if (cardOwing > 0 && move(d, 'bnz-everyday', 'bnz-credit', cardOwing, 'CREDIT CARD PAYMENT', 'PAYMENT RECEIVED - THANK YOU')) {
+        cardOwing = 0;
+      }
     }
   }
 
   // A few recent ones left uncategorised so there's something to sort.
-  add(addDays(today, -1), 'asb-visa', -38.5, 'UBER *EATS 4821', null);
-  add(addDays(today, -2), 'asb-visa', -64.0, 'LOBSTER SEAFOOD CO', null);
+  onCard(addDays(today, -1), 38.5, 'UBER *EATS 4821', null);
+  onCard(addDays(today, -2), 64.0, 'LOBSTER SEAFOOD CO', null);
   add(addDays(today, -3), 'bnz-everyday', -12.5, 'POS W/D 0921 PARKING', null);
 
-  return out.sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+  const seq = (t: Transaction) => Number(t.id.slice(2));
+  return out.sort((a, b) => b.date.localeCompare(a.date) || seq(b) - seq(a));
 }

@@ -4,8 +4,9 @@
  */
 import { createContext, useContext, useMemo, useReducer, type ReactNode } from 'react';
 
-import { applyRules, merchantKey } from '../lib/analytics';
+import { applyRules, merchantKey, TRANSFER_CATEGORY } from '../lib/analytics';
 import { toISO } from '../lib/dates';
+import { matchTransfers } from '../lib/transfers';
 import type { Account, Budget, Category, Goal, Rule, Settings, TermDeposit, Transaction } from '../lib/types';
 import * as sample from './sample';
 
@@ -42,9 +43,15 @@ function reducer(state: State, action: Action): State {
     case 'categorise': {
       const target = state.transactions.find((t) => t.id === action.id);
       if (!target) return state;
-      let transactions = state.transactions.map((t) =>
-        t.id === action.id ? { ...t, categoryId: action.categoryId } : t,
-      );
+      const toTransfer = action.categoryId === TRANSFER_CATEGORY;
+      let transactions = state.transactions.map((t) => {
+        if (t.id === action.id) {
+          return { ...t, categoryId: action.categoryId, transferPairId: toTransfer ? t.transferPairId : undefined };
+        }
+        // Un-marking one side of a transfer releases the other side too.
+        if (!toTransfer && t.id === target.transferPairId) return { ...t, categoryId: null, transferPairId: undefined };
+        return t;
+      });
       let rules = state.rules;
       if (action.makeRule) {
         const match = merchantKey(target.description);
@@ -52,12 +59,16 @@ function reducer(state: State, action: Action): State {
         rules = [rule, ...rules.filter((r) => r.match.toLowerCase() !== match.toLowerCase())];
         transactions = applyRules(transactions, [rule]);
       }
+      // Marking a transaction as a transfer may let its other half be found.
+      if (toTransfer) transactions = matchTransfers(transactions);
       return { ...state, transactions, rules };
     }
     case 'addTransaction': {
       const tx = { ...action.tx, id: newId('tx') };
       const [categorised] = tx.categoryId ? [tx] : applyRules([tx], state.rules);
-      const transactions = [categorised, ...state.transactions].sort((a, b) => b.date.localeCompare(a.date));
+      const transactions = matchTransfers(
+        [categorised, ...state.transactions].sort((a, b) => b.date.localeCompare(a.date)),
+      );
       const accounts = state.accounts.map((a) =>
         a.id === tx.accountId ? { ...a, balance: a.balance + tx.amount } : a,
       );
@@ -93,7 +104,7 @@ function initialState(): State {
   return {
     today,
     accounts: sample.accounts,
-    transactions: applyRules(sample.sampleTransactions(today), sample.rules),
+    transactions: matchTransfers(applyRules(sample.sampleTransactions(today), sample.rules)),
     categories: sample.categories,
     rules: sample.rules,
     termDeposits: sample.sampleTermDeposits(today),

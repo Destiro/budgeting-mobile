@@ -1,10 +1,12 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { Pressable, Switch, View } from 'react-native';
 
-import { Button, Card, Chips, Field, Label, Screen, T } from '../../components/ui';
+import { colors } from '../../components/theme';
+import { Button, Card, Chips, Field, Label, Screen, T, s } from '../../components/ui';
 import { goalSummary } from '../../data/selectors';
 import { newId, useStore } from '../../data/store';
+import { monthlySavingsInflow } from '../../lib/analytics';
 import { addMonths, monthLabel, parseISO, toISO } from '../../lib/dates';
 import { formatMoney } from '../../lib/money';
 import type { Goal } from '../../lib/types';
@@ -22,11 +24,13 @@ export default function EditGoal() {
   const [target, setTarget] = useState(existing ? String(existing.target) : '');
   const [targetDate, setTargetDate] = useState(existing?.targetDate ?? toISO(addMonths(state.today, 12)));
   const [contribution, setContribution] = useState(existing ? String(existing.monthlyContribution) : '');
+  const [auto, setAuto] = useState(existing?.autoContribution ?? false);
   const [accountIds, setAccountIds] = useState<string[]>(existing?.accountIds ?? []);
   const [tdIds, setTdIds] = useState<string[]>(
     existing ? state.termDeposits.filter((t) => t.goalId === existing.id).map((t) => t.id) : [],
   );
 
+  const actual = Math.round(monthlySavingsInflow(state.transactions, accountIds, 3, state.today));
   const savings = state.accounts.filter((a) => a.type === 'savings' || a.type === 'everyday');
   const valid = name.trim() && Number(target) > 0 && isDate(targetDate);
 
@@ -37,6 +41,7 @@ export default function EditGoal() {
     target: Number(target),
     targetDate,
     monthlyContribution: Number(contribution) || 0,
+    autoContribution: auto && accountIds.length > 0,
     accountIds,
   };
 
@@ -74,7 +79,13 @@ export default function EditGoal() {
         <Field label="Target ($)" value={target} onChangeText={setTarget} keyboardType="decimal-pad" style={{ flex: 1 }} />
         <Field label="Target date (YYYY-MM-DD)" value={targetDate} onChangeText={setTargetDate} autoCapitalize="none" style={{ flex: 1.3 }} />
       </View>
-      <Field label="Monthly contribution ($)" value={contribution} onChangeText={setContribution} keyboardType="decimal-pad" />
+      <Field
+        label={draft.autoContribution ? 'Monthly contribution ($, from your transfers)' : 'Monthly contribution ($)'}
+        value={draft.autoContribution ? String(actual) : contribution}
+        onChangeText={setContribution}
+        keyboardType="decimal-pad"
+        editable={!draft.autoContribution}
+      />
 
       <Label>Accounts that count towards this goal</Label>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
@@ -87,6 +98,19 @@ export default function EditGoal() {
           />
         ))}
       </View>
+      {accountIds.length ? (
+        <Card>
+          <Pressable onPress={() => setAuto(!auto)} style={[s.between, { gap: 12 }]}>
+            <View style={{ flex: 1 }}>
+              <T.Body>Use what I actually save</T.Body>
+              <T.Mute>
+                Average of the last 3 months of transfers into the accounts above: {formatMoney(actual, true)}/month
+              </T.Mute>
+            </View>
+            <Switch value={auto} onValueChange={setAuto} trackColor={{ true: colors.accent }} />
+          </Pressable>
+        </Card>
+      ) : null}
       {state.termDeposits.length ? (
         <>
           <Label>Term deposits that count towards this goal</Label>

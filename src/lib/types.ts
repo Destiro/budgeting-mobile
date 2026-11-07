@@ -30,6 +30,8 @@ export interface Transaction {
   amount: number;
   description: string;
   categoryId: string | null;
+  /** For a transfer between your own accounts: the id of the transaction on the other side */
+  transferPairId?: string;
 }
 
 export interface Rule {
@@ -63,6 +65,8 @@ export interface Goal {
   target: number;
   targetDate: string;
   monthlyContribution: number;
+  /** When true, the contribution is what actually moved into the linked accounts recently */
+  autoContribution?: boolean;
   /** Savings accounts whose balances count towards this goal */
   accountIds: string[];
 }
